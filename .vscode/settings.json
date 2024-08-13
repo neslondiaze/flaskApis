@@ -1,4 +1,7 @@
 {
     "files.autoSave": "onFocusChange",
-    "python.analysis.typeCheckingMode": "basic"
+    "python.analysis.typeCheckingMode": "basic",
+    "editor.fontLigatures": true,
+    "editor.inlayHints.fontFamily": "Fira Code",
+    "editor.inlayHints.fontSize": 12
 }
