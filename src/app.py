@@ -12,7 +12,7 @@ CORS(app, resources={r"/cursos/*": {"origins": "http://localhost"}})
 
 conexion = MySQL(app)
 
-
+# --------> CURSOS
 # Listar todos los cursos
 @app.route('/cursos', methods=['GET'])
 def listar_cursos():
@@ -55,7 +55,6 @@ def leer_curso(codigo):
             return jsonify({'mensaje': "Curso no encontrado.", 'exito': False})
     except Exception as ex:
         return jsonify({'mensaje': "Error", 'exito': False})
-
 
 # Agregar curso
 @app.route('/cursos', methods=['POST'])
@@ -114,6 +113,56 @@ def eliminar_curso(codigo):
     except Exception as ex:
         return jsonify({'mensaje': "Error", 'exito': False})
 
+# --------> USUARIOS
+# Leer usuarisos por username
+def leer_user_bd(user_name):
+    try:
+        cursor = conexion.connection.cursor()
+        sql  = "SELECT id, username, fullname  FROM user WHERE username = '{0}'".format(user_name)
+        print(sql)
+        cursor.execute(sql)
+        datos = cursor.fetchone()
+        if datos is not None:
+            user = {'id': datos[0], 'username': datos[1], 'fullname': datos[2]}
+            return user
+        else:
+            return None
+    except Exception as ex:
+        raise ex
+
+# Listar un usuarios
+@app.route('/user', methods=['GET'])
+def listar_user():
+    try:
+        cursor = conexion.connection.cursor()
+        sql = "SELECT id, username, fullname FROM user ORDER BY username ASC"
+        cursor.execute(sql)
+        datos = cursor.fetchall()
+        users = []
+        for fila in datos:
+            user = {'id': fila[0], 'username': fila[1], 'fullname': fila[2]}
+            users.append(user)
+        return jsonify({'users': user, 'mensaje': "Usuarios listados.", 'exit': True})
+
+    except Exception as ex:
+        return jsonify({'mensaje': "Error", 'exti': False})
+
+# Leer usuario por username
+@app.route('/user/<username>', methods=['GET'])
+def leer_username(username):
+    try:
+        user = leer_user_bd(username)
+        if user is not None:
+            return jsonify({'user': user, 'mensaje': "Usuario encontrado.", 'exito': True})
+        else:
+            return jsonify({'mensaje': "Usuario no encontrado.", 'exito': False})
+    except Exception as ex:
+        return jsonify({'mensaje': "Error", 'exito': False})
+
+# Agregar usuarios
+@app.route('/user', methods=['POST'])
+
+# --------> Funciones Generales
 # Pagina no encontrada
 def pagina_no_encontrada(error):
     return "<h1>Página no encontrada</h1>", 404
